@@ -6,7 +6,6 @@ import subprocess
 import json
 
 
-uuid = '50c441ab-05a0-423f-a511-3b93a7dfa29c'
 index = '3'
 
 
