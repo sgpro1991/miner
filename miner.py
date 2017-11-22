@@ -4,10 +4,44 @@ import sh
 import signal
 import subprocess
 import json
-
+import socket
+import traceback
+from colors import *
+import sys
 
 uuid = '50c441ab-05a0-423f-a511-3b93a7dfa29c'
-index = '3'
+index = '5'
+
+def Error(data,type):
+    if type == 'error':
+        sys.stdout.write(RED)
+        print(data)
+        sys.stdout.write(RESET)
+
+
+def GetMac():
+    try:
+        import re, uuid
+        return (':'.join(re.findall('..', '%012x' % uuid.getnode())))
+    except Exception:
+        Error('MAC NOT FOUND','error')
+        sys.stdout.write(RESET)
+        print(traceback.format_exc())
+
+
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    return s.getsockname()[0]
+
+
+
+def Initialize():
+    return get_ip_address()
+
+
+
+print(GetMac(),get_ip_address())
 
 
 
