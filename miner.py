@@ -1,22 +1,43 @@
-import requests as req
-import os
-import sh
-import signal
 import subprocess
-import json
-import socket
-import traceback
-from colors import *
 import sys
-
-uuid = '50c441ab-05a0-423f-a511-3b93a7dfa29c'
-index = '5'
+from colors import *
 
 def Error(data,type):
     if type == 'error':
         sys.stdout.write(RED)
         print(data)
         sys.stdout.write(RESET)
+    if type == 'ok':
+        sys.stdout.write(BLUE)
+        print('========== '+data+' ============')
+        sys.stdout.write(RESET)
+
+
+def Initialize():
+    try:
+        subprocess.call(["pip3","install","-r","requirements.txt"])
+        Error('module setup completed','ok')
+    except:
+        Error('module setup completed','error')
+Initialize()
+
+
+import requests as req
+import os
+import sh
+import signal
+import json
+import socket
+import traceback
+
+
+
+uuid = '50c441ab-05a0-423f-a511-3b93a7dfa29c'
+index = '5'
+
+
+
+
 
 
 def GetMac():
@@ -34,10 +55,6 @@ def get_ip_address():
     s.connect(("8.8.8.8", 80))
     return s.getsockname()[0]
 
-
-
-def Initialize():
-    return get_ip_address()
 
 
 
