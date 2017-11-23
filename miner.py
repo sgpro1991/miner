@@ -13,8 +13,6 @@ def Msg(data,type):
         sys.stdout.write(RESET)
 
 
-type_os = ''
-
 def Initialize():
     try:
         subprocess.call(["pip3","install","-r","requirements.txt"])
