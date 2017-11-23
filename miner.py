@@ -27,7 +27,7 @@ def Initialize():
         Msg('NO deb','error')
 
     try:
-        sys.stdout.write(RESET)
+        subprocess.call(["dnf","install","lib64xcb-sync0-1.9.1-2.1.mga4.x86_64.rpm","-y"])
         subprocess.call(["dnf","install","minergate-cli.rpm","-y"])
         Msg('Install for RHEL base','ok')
         return True
