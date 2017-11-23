@@ -45,7 +45,7 @@ import signal
 import json
 import socket
 import traceback
-import psutil
+
 
 
 uuid = '50c441ab-05a0-423f-a511-3b93a7dfa29c'
@@ -71,7 +71,7 @@ def GetIpAddress():
 
 
 def GetCores():
-    return psutil.cpu_count()
+    return os.cpu_count()
 
 
 print(GetMac(),GetCores())
