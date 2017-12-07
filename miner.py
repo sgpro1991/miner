@@ -2,6 +2,8 @@ import subprocess
 import sys
 from colors import *
 
+
+
 def Msg(data,type):
     if type == 'error':
         sys.stdout.write(RED)
@@ -26,6 +28,10 @@ def Initialize():
         with open('./conf.py','w') as f:
             f.write('config = [{"os":"deb"}]')
 
+        with open('./init.py','w') as f:
+            f.write('config = [{"init":"on"}]')
+
+
         return True
     except:
         Msg('NO deb','error')
@@ -37,16 +43,25 @@ def Initialize():
         Msg('Install for RHEL base','ok')
         type_os = "rpm"
         with open('./conf.py','w') as f:
-            f.write('config = [{"os":"rpm"}]')
+            f.write('config = [{"os":"rpm","init":"on"}]')
+
+        with open('./init.py','w') as f:
+            f.write('config = [{"init":"on"}]')
 
         return True
     except:
         Msg('NO RHEL','error')
-        
-        
 
 
-Initialize()
+
+
+from  init import config
+if config[0]['init'] == 'off':
+    Initialize()
+else:
+    pass
+
+
 
 
 import requests as req
@@ -78,6 +93,8 @@ def GetIpAddress():
     return s.getsockname()[0]
 
 
+
+uuid = '50c441ab-05a0-423f-a511-3b93a7dfa29c'
 
 def GetCores():
     return os.cpu_count()
@@ -112,7 +129,7 @@ CreateRecord()
 
 
 
-uuid = '50c441ab-05a0-423f-a511-3b93a7dfa29c'
+
 index = GetMac() 
 
 
@@ -158,6 +175,14 @@ def KillProcess():
 
 r = req.get('http://cfm.ru:9898/?uuid='+uuid+'&index='+index)
 param = json.loads(r.text)
+
+
+if param[0]['update'] == True:
+    import time
+    subprocess.call(['git','fetch'])
+    time.sleep(10)
+    subprocess.call(['git','merge'])
+    req.get('http://cfm.ru:9898/update/?uuid='+uuid+'&index='+index+'&val=reload')
 
 
 if param[0]['change'] == True:
